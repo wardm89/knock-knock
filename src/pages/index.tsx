@@ -1,35 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/await-thenable */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { type JokeParameters } from "~/utils/interfaces";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
 
 const JokeGenerator = (props: JokeParameters) => {
   const [jokeResponse, setJokeResponse] = useState("Knock knock... ");
   const [isLoading, setIsLoading] = useState(false); // Add loading state
 
-  console.log(props);
   const { mutate } = api.jokes.getJoke.useMutation({
     onSuccess: (data) => {
       setIsLoading(false); // Turn off loading state
-      setJokeResponse(data.text);
+      setJokeResponse(data);
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage && errorMessage[0]) {
-        toast.error(errorMessage[0]);
+        alert(
+          "Failed to get joke! Please try again later. \n" + errorMessage[0]
+        );
       } else {
-        toast.error("Failed to get joke! Please try again later.");
+        alert("Failed to get joke! Please try again later.");
       }
-      alert("Failed to get joke! Please try again later.");
       setIsLoading(false); // Turn off loading state
     },
   });

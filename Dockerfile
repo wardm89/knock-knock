@@ -1,5 +1,5 @@
 # Use an official Node.js 18 runtime as the base image
-FROM node:14-alpine
+FROM node:18-alpine
 
 # Set the build argument for the version (default to "1.0.0" if not provided)
 ARG APP_VERSION=1.0.0

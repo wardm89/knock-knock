@@ -13,7 +13,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _NODE_VERSION: node:14.5.0-alpine # default value
+  _NODE_VERSION: node:18-alpine # default value
 
 images:
   - "gcr.io/$PROJECT_ID/knock-knock:$COMMIT_SHA"
