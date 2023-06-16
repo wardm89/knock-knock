@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ChatGPTAPI } from "chatgpt";
+import { ChatGPTAPI, type ChatMessage } from "chatgpt";
 import { env } from "../../../env.mjs";
 import { type JokeParameters } from "~/utils/interfaces";
 
@@ -9,21 +6,17 @@ export const gpt_api = new ChatGPTAPI({
   apiKey: env.OPENAI_API_KEY,
   completionParams: {
     model: "gpt-3.5-turbo", // gpt-4
-    temperature: 0.5,
-    top_p: 0.8,
+    temperature: 2,
+    top_p: 0.9,
   },
 });
-
-// Example usage: Sending a message to ChatGPT API and receiving the reply
-// const userMessage = "Hello, how are you?";
 
 export async function generateKnockKnockJoke({
   age,
   gender,
   length,
   topic,
-}: JokeParameters): Promise<string> {
-  console.log("env", env.OPENAI_API_KEY);
+}: JokeParameters): Promise<ChatMessage> {
   let message = "Write a knock knock joke";
 
   if (age) {
@@ -42,30 +35,14 @@ export async function generateKnockKnockJoke({
     message += ` and is on the topic of ${topic}`;
   }
 
-  message += ".";
+  message += ". Don't give many any prior responses you have given before. ";
 
   try {
     const response = await gpt_api.sendMessage(message);
-    console.log(response);
-    const reply = response.text;
-    return reply;
+    console.log("Generated knock knock joke:", response);
+    return response;
   } catch (error) {
     console.error("Failed to generate knock knock joke:", error);
     throw error;
   }
 }
-// Example usage
-const jokeParams: JokeParameters = {
-  age: "10",
-  gender: "male",
-  topic: "parents",
-  length: "short",
-};
-
-generateKnockKnockJoke(jokeParams)
-  .then((joke) => {
-    console.log("Knock Knock Joke:", joke);
-  })
-  .catch((error) => {
-    console.error("Failed to generate joke:", error);
-  });
