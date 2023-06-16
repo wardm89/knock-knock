@@ -14,9 +14,12 @@ import { toast } from "react-hot-toast";
 
 const JokeGenerator = (props: JokeParameters) => {
   const [jokeResponse, setJokeResponse] = useState("Knock knock... ");
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+
   console.log(props);
   const { mutate } = api.jokes.getJoke.useMutation({
     onSuccess: (data) => {
+      setIsLoading(false); // Turn off loading state
       setJokeResponse(data.text);
     },
     onError: (e) => {
@@ -26,10 +29,13 @@ const JokeGenerator = (props: JokeParameters) => {
       } else {
         toast.error("Failed to get joke! Please try again later.");
       }
+      alert("Failed to get joke! Please try again later.");
+      setIsLoading(false); // Turn off loading state
     },
   });
 
   const handleButtonClick = () => {
+    setIsLoading(true); // Turn on loading state
     mutate(props);
   };
 
@@ -38,9 +44,12 @@ const JokeGenerator = (props: JokeParameters) => {
       <button type="submit" className="btn" onClick={handleButtonClick}>
         Generate Knock Knock Joke
       </button>
+
       <div className="mt-4 rounded-lg bg-white p-4 shadow-lg">
         <h2 className="text-lg font-bold">Generated Joke:</h2>
-        <p>{jokeResponse ?? "Knock knock..."}</p>
+        {isLoading && <p>Loading... This may take up to 30 seconds.</p>}{" "}
+        {/* Render loading message */}
+        {!isLoading && <p>{jokeResponse ?? "Knock knock..."}</p>}
       </div>
     </div>
   );
@@ -115,22 +124,12 @@ const Home: NextPage = () => {
                   <input
                     type="radio"
                     onChange={handleInputChange}
-                    id="age1-6"
+                    id="age1-12"
                     name="age"
-                    value="1-6"
+                    value="1-12"
                     className="mr-1"
                   />
-                  <label htmlFor="age1-6">1-6</label>
-                  <br />
-                  <input
-                    type="radio"
-                    onChange={handleInputChange}
-                    id="age7-12"
-                    name="age"
-                    value="7-12"
-                    className="mr-1"
-                  />
-                  <label htmlFor="age7-12">7-12</label>
+                  <label htmlFor="age7-12">1-12</label>
                   <br />
                   <input
                     type="radio"
@@ -211,7 +210,7 @@ const Home: NextPage = () => {
                     onChange={handleInputChange}
                     id="short"
                     name="length"
-                    value="Short"
+                    value="15"
                     className="mr-1"
                   />
                   <label htmlFor="short">Short</label>
@@ -221,7 +220,7 @@ const Home: NextPage = () => {
                     onChange={handleInputChange}
                     id="medium"
                     name="length"
-                    value="Medium"
+                    value="30"
                     className="mr-1"
                     defaultChecked
                   />
@@ -232,7 +231,7 @@ const Home: NextPage = () => {
                     onChange={handleInputChange}
                     id="long"
                     name="length"
-                    value="Long"
+                    value="60-120"
                     className="mr-1"
                   />
                   <label htmlFor="long">Long</label>
@@ -242,7 +241,7 @@ const Home: NextPage = () => {
                     onChange={handleInputChange}
                     id="story"
                     name="length"
-                    value="Story"
+                    value="200"
                     className="mr-1"
                   />
                   <label htmlFor="story">Story</label>

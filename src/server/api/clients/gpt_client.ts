@@ -28,7 +28,7 @@ export async function generateKnockKnockJoke({
   }
 
   if (length) {
-    message += ` that is of ${length} length`;
+    message += ` that is roughly ${length} words in length`;
   }
 
   if (topic) {
