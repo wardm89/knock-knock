@@ -3,24 +3,23 @@ steps:
     entrypoint: yarn
 
   - name: "node:18-alpine"
-      - 'run'
-      - 'bash'
-      - '-c'
-      - |
-        echo "DATABASE_URL='$$DATABASE_URL'" > .env
-        echo "MYSQL_DB_USERNAME='$$MYSQL_DB_USERNAME'" >> .env
-        echo "MYSQL_DB_PASSWORD='$$MYSQL_DB_PASSWORD'" >> .env
-        echo "NEXTAUTH_SECRET='$$NEXTAUTH_SECRET'" >> .env
-        echo "NEXTAUTH_URL='$$NEXTAUTH_URL'" >> .env
-        echo "DISCORD_CLIENT_ID='$$DISCORD_CLIENT_ID'" >> .env
-        echo "DISCORD_CLIENT_SECRET='$$DISCORD_CLIENT_SECRET'" >> .env
-        echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY='$$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY'" >> .env
-        echo "CLERK_SECRET_KEY='$$CLERK_SECRET_KEY'" >> .env
-        echo "OPENAI_API_KEY='$$OPENAI_API_KEY'" >> .env
+    entrypoint: "yarn"
+    args: ["create-env"]
+    env:
+      - DATABASE_URL${_DATABASE_URL}
+      - MYSQL_DB_USERNAME${_MYSQL_DB_USERNAME}
+      - MYSQL_DB_PASSWORD${_MYSQL_DB_PASSWORD}
+      - NEXTAUTH_SECRET${_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL${_NEXTAUTH_URL}
+      - DISCORD_CLIENT_ID${_DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET${_DISCORD_CLIENT_SECRET}
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY${_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      - CLERK_SECRET_KEY${_CLERK_SECRET_KEY}
+      - OPENAI_API_KEY${_OPENAI_API_KEY}
 
-      - '&&'
-      - 'yarn'
-      - 'build'
+  - name: "node:18-alpine"
+    entrypoint: yarn
+    args: ["build"]
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/knock-knock:$COMMIT_SHA", "."]
