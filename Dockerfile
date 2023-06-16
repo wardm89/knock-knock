@@ -13,7 +13,7 @@ EXPOSE 3000
 COPY package.json yarn.lock ./
 
 # Install dependencies using Yarn
-RUN yarn install
+RUN yarn
 
 # Copy the rest of the application code to the working directory
 COPY . .
