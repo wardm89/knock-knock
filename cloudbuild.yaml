@@ -25,26 +25,50 @@ steps:
     args:
       - "build"
       - "-t"
-      - "gcr.io/$PROJECT_ID/knock-knock:$COMMIT_SHA"
+      - "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"
       - "."
 
   - name: "gcr.io/cloud-builders/docker"
     args:
       [
         "tag",
-        "gcr.io/$PROJECT_ID/knock-knock:$COMMIT_SHA",
-        "us-east1-docker.pkg.dev/$PROJECT_ID/knock-knock/knock-knock:$COMMIT_SHA",
+        "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA",
+        "$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$_SERVICE_NAME:$COMMIT_SHA",
       ]
 
   - name: "gcr.io/cloud-builders/docker"
     args:
       [
         "push",
-        "us-east1-docker.pkg.dev/$PROJECT_ID/knock-knock/knock-knock:$COMMIT_SHA",
+        "$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$_SERVICE_NAME:$COMMIT_SHA",
+      ]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "$_SERVICE_NAME",
+        "--image",
+        "$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$_SERVICE_NAME:$COMMIT_SHA",
+        "--region",
+        "$_DEPLOY_REGION",
+        "--platform",
+        "managed",
       ]
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
 images:
-  - "gcr.io/$PROJECT_ID/knock-knock:$COMMIT_SHA"
+  - "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"
+
+substitutions:
+  _SERVICE_NAME: knock-knock
+  _DEPLOY_REGION: us-east1
+  _AR_HOSTNAME: us-east1-docker.pkg.dev
+  _PLATFORM: managed
+tags:
+  - gcp-cloud-build-deploy-cloud-run
+  - knock-knock
